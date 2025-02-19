@@ -1,78 +1,29 @@
-const getResetPasswordTemplate = (otp, firstName = '') => `
-<!DOCTYPE html>
-<html>
-<head>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            line-height: 1.6;
-            color: #333333;
-        }
-        .container {
-            max-width: 600px;
-            margin: 0 auto;
-            padding: 20px;
-            background-color: #f9f9f9;
-            border-radius: 10px;
-        }
-        .header {
-            background-color: #2196F3;
-            color: white;
-            padding: 20px;
-            text-align: center;
-            border-radius: 10px 10px 0 0;
-        }
-        .content {
-            padding: 20px;
-            background-color: white;
-            border-radius: 0 0 10px 10px;
-        }
-        .otp-box {
-            background-color: #f5f5f5;
-            padding: 15px;
-            margin: 20px 0;
-            text-align: center;
-            font-size: 24px;
-            font-weight: bold;
-            letter-spacing: 5px;
-            border-radius: 5px;
-        }
-        .warning {
-            color: #f44336;
-            font-size: 14px;
-            margin-top: 20px;
-        }
-        .footer {
-            text-align: center;
-            margin-top: 20px;
-            font-size: 12px;
-            color: #666666;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <div class="header">
-            <h1>Password Reset</h1>
-        </div>
-        <div class="content">
-            <p>Hello ${firstName ? firstName : 'there'},</p>
-            <p>We received a request to reset your RentalKE account password. Please use the following OTP to reset your password:</p>
-            
-            <div class="otp-box">
-                ${otp}
-            </div>
-            
-            <p>This OTP will expire in 1 hour.</p>
-            <p class="warning">If you didn't request a password reset, please ignore this email or contact support if you have concerns.</p>
-        </div>
-        <div class="footer">
-            <p>This is an automated message, please do not reply.</p>
-            <p>&copy; ${new Date().getFullYear()} RentalKE. All rights reserved.</p>
-        </div>
+const { getEmailWrapper } = require('./components');
+
+const getResetPasswordTemplate = (otp, firstName = '') => {
+  const content = `
+    <div style="padding: 20px; background-color: #ffffff; border-radius: 8px;">
+      <h2 style="color: #2c3e50; text-align: center; margin-bottom: 30px;">Password Reset</h2>
+      
+      <p style="font-size: 16px; color: #333;">Hello ${firstName ? firstName : 'there'},</p>
+      
+      <p style="font-size: 16px; color: #333;">We received a request to reset your RentalKE account password. Please use the following OTP to reset your password:</p>
+      
+      <div style="background-color: #f8f9fa; padding: 20px; margin: 20px 0; text-align: center; border-radius: 8px;">
+        <span style="font-size: 32px; font-weight: bold; letter-spacing: 5px; color: #2c3e50;">${otp}</span>
+      </div>
+      
+      <p style="font-size: 16px; color: #333;">This OTP will expire in 1 hour.</p>
+      
+      <div style="margin: 30px 0; padding: 15px; background-color: #fff3cd; border-left: 4px solid #ffc107; border-radius: 4px;">
+        <p style="margin: 0; color: #856404; font-size: 14px;">
+          If you didn't request a password reset, please ignore this email or contact support if you have concerns.
+        </p>
+      </div>
     </div>
-</body>
-</html>
-`;
+  `;
+
+  return getEmailWrapper(content);
+};
 
 module.exports = getResetPasswordTemplate;
