@@ -45,7 +45,7 @@ RentalKE is a comprehensive property management system that enables property man
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/rentalkeserver.git
+   git clone https://github.com/MuhoroDev-tony/Rentalke-server.git
    cd rentalkeserver
    ```
 
@@ -90,7 +90,7 @@ SMTP_PASS="your-password"
 SMTP_FROM="noreply@rentalke.com"
 
 # Frontend
-FRONTEND_URL="http://localhost:3000"
+FRONTEND_URL="http://localhost:8080"
 
 # Cloudinary
 CLOUDINARY_CLOUD_NAME="your-cloud-name"
@@ -113,10 +113,12 @@ rentalkeserver/
 │   ├── templates/       # Email templates
 │   ├── utils/           # Utility functions
 │   ├── validators/      # Request validators
-│   └── index.js         # App entry point
+│   └── index.js         # App 
+|   |__app.js
 ├── prisma/
 │   └── schema.prisma    # Database schema
 └── tests/               # Test files
+|___server.js            #App entry
 ```
 
 ## Contributing
@@ -133,4 +135,4 @@ This project is licensed under the MIT License.
 
 ## Support
 
-For support, email support@rentalke.com or create an issue in the repository.
+For support, email anthonymuhoro7@gmail.com  or create an issue in the repository.
