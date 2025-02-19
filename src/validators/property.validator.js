@@ -27,9 +27,8 @@ const rentalUnitSchema = z.object({
   name: z.string().min(2, 'Unit name must be at least 2 characters'),
   unitType: z.enum(['OFFICE', 'RESIDENTIAL', 'BUSINESS']),
   unitSize: z.enum(['ONE_BED', 'TWO_BED', 'THREE_BED']).optional(),
-  address: z.string().min(5, 'Address must be at least 5 characters'),
-  city: z.string().min(2, 'City name must be at least 2 characters'),
   unitPrice: z.number().positive('Unit price must be positive'),
+  interiorFeatures: z.array(z.string()).optional(),
   images: z.array(z.string().url('Invalid image URL')).optional(),
   availability: z.enum(['VACANT', 'OCCUPIED']).optional()
 });

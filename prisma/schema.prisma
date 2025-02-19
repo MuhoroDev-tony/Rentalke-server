@@ -126,27 +126,26 @@ model Building {
 }
 
 model RentalUnit {
-  id            String           @id @default(cuid())
-  managerId     String
-  estateId      String
-  buildingId    String
-  name          String
-  unitType      UnitType
-  unitSize      UnitSize?
-  address       String
-  city          String
-  unitPrice     Float
-  images        String[]
-  availability  UnitAvailability @default(VACANT)
-  createdAt     DateTime         @default(now())
-  updatedAt     DateTime         @updatedAt
+  id              String           @id @default(cuid())
+  managerId       String
+  estateId        String
+  buildingId      String
+  name            String
+  unitType        UnitType
+  unitSize        UnitSize?
+  unitPrice       Float
+  interiorFeatures String[]
+  images          String[]
+  availability    UnitAvailability @default(VACANT)
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
 
   // Relations
-  manager       User      @relation(fields: [managerId], references: [id])
-  estate        Estate    @relation(fields: [estateId], references: [id])
-  building      Building  @relation(fields: [buildingId], references: [id])
-  bookings      Booking[]
-  reviews       Review[]
+  manager         User      @relation(fields: [managerId], references: [id])
+  estate          Estate    @relation(fields: [estateId], references: [id])
+  building        Building  @relation(fields: [buildingId], references: [id])
+  bookings        Booking[]
+  reviews         Review[]
 
   @@map("rental_units")
 }
