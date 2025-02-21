@@ -7,6 +7,8 @@ const estateSchema = z.object({
   longitude: z.number().min(-180).max(180),
   county: z.string().min(2, 'County name must be at least 2 characters'),
   subcounty: z.string().min(2, 'Subcounty name must be at least 2 characters'),
+  estateFeatures: z.array(z.string()).optional(),
+  customFeatures: z.array(z.string()).optional(),
   description: z.string().optional(),
   images: z.array(z.string().url('Invalid image URL')).optional()
 });

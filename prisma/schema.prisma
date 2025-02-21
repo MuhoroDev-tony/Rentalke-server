@@ -87,6 +87,8 @@ model Estate {
   longitude     Float
   county        String
   subcounty     String
+  estateFeatures String[]
+  customFeatures   String[]
   description   String?
   images        String[]
   createdAt     DateTime  @default(now())
@@ -94,8 +96,8 @@ model Estate {
 
   // Relations
   manager       User      @relation(fields: [managerId], references: [id])
-  buildings     Building[]
-  rentalUnits   RentalUnit[]
+  buildings     Building[] @relation("EstateBuildings")
+  rentalUnits   RentalUnit[] @relation("EstateUnits")
   bookings      Booking[]
   reviews       Review[]
 
@@ -117,8 +119,8 @@ model Building {
 
   // Relations
   manager         User      @relation(fields: [managerId], references: [id])
-  estate          Estate    @relation(fields: [estateId], references: [id])
-  rentalUnits     RentalUnit[]
+  estate          Estate    @relation("EstateBuildings", fields: [estateId], references: [id], onDelete: Cascade)
+  rentalUnits     RentalUnit[] @relation("BuildingUnits")
   bookings        Booking[]
   reviews         Review[]
 
@@ -142,8 +144,8 @@ model RentalUnit {
 
   // Relations
   manager         User      @relation(fields: [managerId], references: [id])
-  estate          Estate    @relation(fields: [estateId], references: [id])
-  building        Building  @relation(fields: [buildingId], references: [id])
+  estate          Estate    @relation("EstateUnits", fields: [estateId], references: [id], onDelete: Cascade)
+  building        Building  @relation("BuildingUnits", fields: [buildingId], references: [id], onDelete: Cascade)
   bookings        Booking[]
   reviews         Review[]
 

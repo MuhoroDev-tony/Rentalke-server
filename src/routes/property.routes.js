@@ -5,8 +5,37 @@ const estateController = require('../controllers/estate.controller');
 const buildingController = require('../controllers/building.controller');
 const unitController = require('../controllers/unit.controller');
 const { authenticate } = require('../middlewares/auth.middleware');
+const upload = require('../middleware/upload');
+const { uploadToCloudinary } = require('../utils/cloudinary');
 
 const router = express.Router();
+
+// Image upload route
+router.post('/upload-images', authenticate, upload.array('images'), async (req, res) => {
+    try {
+        if (!req.files || req.files.length === 0) {
+            return res.status(400).json({
+                status: 'error',
+                message: 'No images uploaded'
+            });
+        }
+
+        const uploadPromises = req.files.map(file => uploadToCloudinary(file));
+        const uploadedUrls = await Promise.all(uploadPromises);
+
+        res.json({
+            status: 'success',
+            urls: uploadedUrls
+        });
+    } catch (error) {
+        console.error('Image upload error:', error);
+        res.status(500).json({
+            status: 'error',
+            message: 'Failed to upload images',
+            error: error.message
+        });
+    }
+});
 
 // Estate routes
 router.post('/manager/estate', authenticate, validate(estateSchema), estateController.createEstate);

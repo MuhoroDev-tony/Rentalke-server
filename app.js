@@ -54,7 +54,7 @@ app.use('/api/v1/admin', require('./src/routes/admin.routes'));
 app.use('/api/v1/manager', require('./src/routes/manager.routes'));
 app.use('/api/v1/client', require('./src/routes/client.routes'));
 app.use('/api/v1/properties', require('./src/routes/property.routes'));
-
+app.use('/api/v1/properties/upload-images', require('./src/routes/property.routes'));
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.error(err.stack);

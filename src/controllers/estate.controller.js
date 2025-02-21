@@ -1,11 +1,18 @@
 const { PrismaClient } = require('@prisma/client');
 const { sendEmailNotification } = require('../utils/email');
+const { uploadToCloudinary } = require('../utils/cloudinary');
 const prisma = new PrismaClient();
 
 exports.createEstate = async (req, res) => {
   try {
     const managerId = req.user.id;
     const estateData = { ...req.body, managerId };
+
+    // Handle image upload if present
+    if (req.file) {
+      const imageUrl = await uploadToCloudinary(req.file);
+      estateData.imageUrl = imageUrl;
+    }
 
     const estate = await prisma.estate.create({
       data: estateData,
@@ -15,7 +22,8 @@ exports.createEstate = async (req, res) => {
             id: true,
             firstName: true,
             lastName: true,
-            email: true
+            email: true,
+            phone:true
           }
         }
       }
@@ -247,6 +255,12 @@ exports.updateEstate = async (req, res) => {
         success: false,
         message: 'Estate not found or you do not have permission to update it'
       });
+    }
+
+    // Handle image upload if present
+    if (req.file) {
+      const imageUrl = await uploadToCloudinary(req.file);
+      req.body.imageUrl = imageUrl;
     }
 
     const estate = await prisma.estate.update({

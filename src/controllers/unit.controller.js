@@ -14,7 +14,7 @@ exports.createRentalUnit = async (req, res) => {
         managerId
       },
       include: {
-        estate: false
+        estate: true
       }
     });
 
