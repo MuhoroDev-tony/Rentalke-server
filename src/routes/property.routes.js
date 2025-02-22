@@ -24,6 +24,7 @@ router.post('/upload-images', authenticate, upload.array('images'), async (req, 
         const uploadedUrls = await Promise.all(uploadPromises);
 
         res.json({
+            success:true,
             message: 'success',
             urls: uploadedUrls
         });
