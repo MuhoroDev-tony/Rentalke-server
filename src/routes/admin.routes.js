@@ -10,6 +10,7 @@ const router = express.Router();
 router.post('/signup',adminAuthController.register);
 router.post('/login',  adminAuthController.login);
 router.post('/forgot-password', adminAuthController.forgotPassword);
+router.post('/reset-password', adminAuthController.resetPassword);
 router.post('/change-password', authenticate, adminAuthController.changePassword);
 router.post('/verify-otp',adminAuthController.verifyOTP);
 router.post('/resend-otp',  adminAuthController.resendOTP);

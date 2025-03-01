@@ -14,18 +14,6 @@ enum UserRole {
   ADMIN
 }
 
-enum UnitType {
-  OFFICE
-  RESIDENTIAL
-  BUSINESS
-}
-
-enum UnitSize {
-  ONE_BED
-  TWO_BED
-  THREE_BED
-}
-
 enum UnitAvailability {
   VACANT
   OCCUPIED
@@ -47,6 +35,7 @@ model User {
   googleId      String?   @unique
   facebookId    String?   @unique
   role          UserRole  @default(CLIENT)
+  resetPasswordOTP String?
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
@@ -133,8 +122,8 @@ model RentalUnit {
   estateId        String
   buildingId      String
   name            String
-  unitType        UnitType
-  unitSize        UnitSize?
+  unitType        String
+  unitSize        String
   unitPrice       Float
   interiorFeatures String[]
   images          String[]

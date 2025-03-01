@@ -2,6 +2,7 @@ const { PrismaClient } = require('@prisma/client');
 const { sendEmailNotification } = require('../utils/email');
 const prisma = new PrismaClient();
 
+
 exports.createRentalUnit = async (req, res) => {
   try {
     const managerId = req.user.id;
@@ -85,6 +86,108 @@ exports.createRentalUnit = async (req, res) => {
     });
   }
 };
+
+exports.createMultipleRentalUnits = async (req, res) => {
+  try {
+    const { buildingId, unitType, unitSize, interiorFeatures, unitPrice, availability, unitPrefix = "Room", unitCount, images = [] } = req.body;
+
+    if (!unitCount || unitCount < 1) {
+      return res.status(400).json({ success: false, message: "Unit count must be at least 1" });
+    }
+
+    // Convert prefix to uppercase for case-insensitive comparison
+    const upperCasePrefix = unitPrefix.toUpperCase();
+
+    // Fetch building details to get managerId & estateId
+    const building = await prisma.building.findUnique({
+      where: { id: buildingId },
+      include: { estate: true }
+    });
+
+    if (!building) {
+      return res.status(404).json({ success: false, message: "Building not found." });
+    }
+
+    const managerId = building.managerId;
+    const estateId = building.estate.id;
+
+    // Get last unit with the same prefix (case-insensitive)
+    const lastUnit = await prisma.rentalUnit.findFirst({
+      where: {
+        buildingId,
+        name: { startsWith: upperCasePrefix } // Ensures we get the last unit with this prefix
+      },
+      orderBy: { createdAt: "desc" },
+      select: { name: true }
+    });
+
+    let lastNumber = 0;
+    if (lastUnit && lastUnit.name) {
+      const match = lastUnit.name.match(/\d+$/); // Extract last number
+      lastNumber = match ? parseInt(match[0], 10) : 0;
+    }
+
+    // Insert multiple units
+    const createdUnits = [];
+    for (let i = 1; i <= unitCount; i++) {
+      const unitName = `${upperCasePrefix} ${lastNumber + i}`;
+      const createdAt = new Date();
+
+      const newUnit = await prisma.rentalUnit.create({
+        data: {
+          name: unitName,
+          estateId,
+          buildingId,
+          managerId,
+          unitType,
+          unitSize,
+          interiorFeatures,
+          unitPrice,
+          availability,
+          images, // Store images array
+          createdAt
+        },
+        select: {
+          id: true,
+          name: true,
+          unitType: true,
+          unitSize: true,
+          interiorFeatures: true,
+          unitPrice: true,
+          availability: true,
+          images: true,
+          createdAt: true
+        }
+      });
+
+      createdUnits.push(newUnit);
+    }
+
+    res.status(201).json({
+      success: true,
+      message: `${unitCount} rental units created successfully`,
+      managerId,
+      estateId,
+      buildingId,
+      units: createdUnits
+    });
+
+  } catch (error) {
+    console.error("Create multiple rental units error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to create rental units",
+      error: error.message
+    });
+  }
+};
+
+
+
+
+
+// Function to generate PDF in memory
+
 
 exports.getRentalUnitById = async (req, res) => {
   try {

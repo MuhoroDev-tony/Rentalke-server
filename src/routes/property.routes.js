@@ -58,6 +58,7 @@ router.delete('/manager/building/:id', authenticate, buildingController.deleteBu
 
 // Rental Unit routes
 router.post('/manager/rental-unit', authenticate,  unitController.createRentalUnit);
+router.post('/manager/multiple-rental-units', authenticate, unitController.createMultipleRentalUnits);
 router.get('/manager/rental-units', authenticate, unitController.getManagerRentalUnits);
 router.get('/manager/rental-unit/:id', authenticate, unitController.getManagerRentalUnitById);
 router.get('/rental-units/all', unitController.getAllRentalUnits);

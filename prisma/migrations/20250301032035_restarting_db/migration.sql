@@ -2,12 +2,6 @@
 CREATE TYPE "UserRole" AS ENUM ('CLIENT', 'MANAGER', 'ADMIN');
 
 -- CreateEnum
-CREATE TYPE "UnitType" AS ENUM ('OFFICE', 'RESIDENTIAL', 'BUSINESS');
-
--- CreateEnum
-CREATE TYPE "UnitSize" AS ENUM ('ONE_BED', 'TWO_BED', 'THREE_BED');
-
--- CreateEnum
 CREATE TYPE "UnitAvailability" AS ENUM ('VACANT', 'OCCUPIED');
 
 -- CreateEnum
@@ -24,6 +18,7 @@ CREATE TABLE "users" (
     "googleId" TEXT,
     "facebookId" TEXT,
     "role" "UserRole" NOT NULL DEFAULT 'CLIENT',
+    "resetPasswordOTP" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
@@ -56,6 +51,8 @@ CREATE TABLE "estates" (
     "longitude" DOUBLE PRECISION NOT NULL,
     "county" TEXT NOT NULL,
     "subcounty" TEXT NOT NULL,
+    "estateFeatures" TEXT[],
+    "customFeatures" TEXT[],
     "description" TEXT,
     "images" TEXT[],
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -88,11 +85,10 @@ CREATE TABLE "rental_units" (
     "estateId" TEXT NOT NULL,
     "buildingId" TEXT NOT NULL,
     "name" TEXT NOT NULL,
-    "unitType" "UnitType" NOT NULL,
-    "unitSize" "UnitSize",
-    "address" TEXT NOT NULL,
-    "city" TEXT NOT NULL,
+    "unitType" TEXT NOT NULL,
+    "unitSize" TEXT NOT NULL,
     "unitPrice" DOUBLE PRECISION NOT NULL,
+    "interiorFeatures" TEXT[],
     "images" TEXT[],
     "availability" "UnitAvailability" NOT NULL DEFAULT 'VACANT',
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -174,16 +170,16 @@ ALTER TABLE "estates" ADD CONSTRAINT "estates_managerId_fkey" FOREIGN KEY ("mana
 ALTER TABLE "buildings" ADD CONSTRAINT "buildings_managerId_fkey" FOREIGN KEY ("managerId") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "buildings" ADD CONSTRAINT "buildings_estateId_fkey" FOREIGN KEY ("estateId") REFERENCES "estates"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "buildings" ADD CONSTRAINT "buildings_estateId_fkey" FOREIGN KEY ("estateId") REFERENCES "estates"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "rental_units" ADD CONSTRAINT "rental_units_managerId_fkey" FOREIGN KEY ("managerId") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "rental_units" ADD CONSTRAINT "rental_units_estateId_fkey" FOREIGN KEY ("estateId") REFERENCES "estates"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "rental_units" ADD CONSTRAINT "rental_units_estateId_fkey" FOREIGN KEY ("estateId") REFERENCES "estates"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "rental_units" ADD CONSTRAINT "rental_units_buildingId_fkey" FOREIGN KEY ("buildingId") REFERENCES "buildings"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "rental_units" ADD CONSTRAINT "rental_units_buildingId_fkey" FOREIGN KEY ("buildingId") REFERENCES "buildings"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "bookings" ADD CONSTRAINT "bookings_clientId_fkey" FOREIGN KEY ("clientId") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
