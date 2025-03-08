@@ -78,6 +78,8 @@ exports.getBuildingById = async (req, res) => {
     const building = await prisma.building.findUnique({
       where: { id },
       select: {
+        managerId: true,
+        estateId: true,
         id: true,
         name: true,
         noOfFloors: true,
@@ -101,6 +103,8 @@ exports.getBuildingById = async (req, res) => {
         estate: true,
         rentalUnits: {
           select: {
+            managerId: true,
+            estateId: true,
             id: true,
             name: true,
             unitType: true,
@@ -144,6 +148,8 @@ exports.getManagerBuildings = async (req, res) => {
         estate: true,
         rentalUnits: {
           select: {
+            managerId: true,
+            estateId: true,
             id: true,
             name: true,
             unitType: true,
@@ -185,6 +191,8 @@ exports.getManagerBuildingById = async (req, res) => {
         estate: true,
         rentalUnits: {
           select: {
+            managerId: true,
+            estateId: true,
             id: true,
             name: true,
             unitType: true,
@@ -234,6 +242,8 @@ exports.getAllBuildings = async (req, res) => {
         estate: true,
         rentalUnits: {
           select: {
+            managerId: true,
+            estateId: true,
             id: true,
             name: true,
             unitType: true,

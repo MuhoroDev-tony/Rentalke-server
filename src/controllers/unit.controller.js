@@ -37,6 +37,9 @@ exports.createRentalUnit = async (req, res) => {
     const rentalUnit = await prisma.rentalUnit.create({
       data: unitData,
       include: {
+        managerId: true,
+        estateId: true,
+        buildingId: true,
         manager: {
           select: {
             id: true,
@@ -149,6 +152,9 @@ exports.createMultipleRentalUnits = async (req, res) => {
         },
         select: {
           id: true,
+          managerId: true,
+          estateId: true,
+          buildingId: true,
           name: true,
           unitType: true,
           unitSize: true,
@@ -195,6 +201,9 @@ exports.getRentalUnitById = async (req, res) => {
     const rentalUnit = await prisma.rentalUnit.findUnique({
       where: { id },
       include: {
+        managerId: true,
+        estateId: true,
+        buildingId: true,
         manager: {
           select: {
             id: true,
@@ -234,7 +243,9 @@ exports.getManagerRentalUnits = async (req, res) => {
     const managerId = req.user.id;
     const rentalUnits = await prisma.rentalUnit.findMany({
       where: { managerId },
-      include: {
+      include: {managerId: true,
+        estateId: true,
+        buildingId: true,
         estate: false,
         building: false
       }
@@ -265,6 +276,9 @@ exports.getManagerRentalUnitById = async (req, res) => {
         managerId
       },
       include: {
+        managerId: true,
+        estateId: true,
+        buildingId: true,
         estate: false,
         building: false
       }
@@ -295,6 +309,9 @@ exports.getAllRentalUnits = async (req, res) => {
   try {
     const rentalUnits = await prisma.rentalUnit.findMany({
       include: {
+        managerId: true,
+        estateId: true,
+        buildingId: true,
         manager: {
           select: {
             id: true,
@@ -341,7 +358,10 @@ exports.updateRentalUnit = async (req, res) => {
     const rentalUnit = await prisma.rentalUnit.update({
       where: { id },
       data: req.body,
-      include: {
+      include: { 
+        managerId: true,
+        estateId: true,
+        buildingId: true,
         manager: {
           select: {
             id: true,
@@ -351,7 +371,8 @@ exports.updateRentalUnit = async (req, res) => {
           }
         },
         estate: false,
-        building: false
+        building: false,
+        
       }
     });
 
