@@ -116,6 +116,9 @@ exports.getManagerEstates = async (req, res) => {
           include: {
             rentalUnits: {
               select: {
+                managerId: true,
+                estateId: true,
+                buildingId: true,
                 id: true,
                 name: true,
                 unitType: true,
