@@ -359,10 +359,7 @@ exports.updateRentalUnit = async (req, res) => {
       where: { id },
       data: req.body,
       include: { 
-        managerId: true,
-        estateId: true,
-        buildingId: true,
-        manager: {
+                manager: {
           select: {
             id: true,
             firstName: true,
