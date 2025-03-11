@@ -6,19 +6,19 @@ exports.getAllUsers = async (req, res) => {
         // Fetching only firstName, lastName, and email for each user
         const users = await prisma.user.findMany({
             select: {
+                id: true,
                 firstName: true,
                 lastName: true,
                 email: true,
-                phone:true,
-                role:true,
-                position:true,
-                department:true,
-                profileImage:true,
-                status:true,
-                lastLogin:true,
-                createdAt:true,
-                updatedAt:true
-                
+                phone: true,
+                role: true,
+                position: true,
+                department: true,
+                profileImage: true,
+                status: true,
+                lastLogin: true,
+                createdAt: true,
+                updatedAt: true
             }
         });
 

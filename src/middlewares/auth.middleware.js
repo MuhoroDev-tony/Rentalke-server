@@ -15,7 +15,13 @@ exports.authenticate = async (req, res, next) => {
 
     const user = await prisma.user.findUnique({
       where: { id: decoded.userId },
-      select: { id: true, email: true, role: true }
+      select: { 
+        id: true, 
+        email: true, 
+        role: true,
+        position: true,
+        department: true
+      }
     });
 
     if (!user) {
@@ -32,6 +38,7 @@ exports.authenticate = async (req, res, next) => {
   }
 };
 
+// Middleware to check user roles
 exports.authorize = (...roles) => {
   return (req, res, next) => {
     if (!roles.includes(req.user.role)) {

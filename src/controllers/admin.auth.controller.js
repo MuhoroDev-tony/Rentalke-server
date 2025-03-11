@@ -11,9 +11,9 @@ const {
 const prisma = new PrismaClient();
 
 // Generate JWT Token
-const generateToken = (userId, role) => {
+const generateToken = (userId, role, department, position) => {
   return jwt.sign(
-    { userId, role },
+    { userId, role, department, position },
     process.env.JWT_SECRET,
     { expiresIn: process.env.JWT_EXPIRES_IN }
   );
@@ -100,7 +100,7 @@ exports.login = async (req, res) => {
       });
     }
 
-    const token = generateToken(user.id, user.role, user.department, user.position,);
+    const token = generateToken(user.id, user.role, user.department, user.position);
 
     res.status(200).json({
       success: true,
@@ -113,9 +113,9 @@ exports.login = async (req, res) => {
         lastName: user.lastName,
         phone: user.phone,
         role: user.role,
-        department: "",
-        position: "",
-        profileImage: "",
+        department: user.department,
+        position: user.position,
+        profileImage: user.profileImage,
         name: `${user.firstName} ${user.lastName}`
       }
     });
@@ -317,7 +317,7 @@ exports.verifyOTP = async (req, res) => {
     });
 
     // Generate token
-    const token = generateToken(user.id, user.role);
+    const token = generateToken(user.id, user.role, user.department, user.position);
 
     // Send welcome email
     await sendWelcomeEmail(user.email, user.firstName);
