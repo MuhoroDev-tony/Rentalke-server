@@ -30,6 +30,9 @@ const seedAdmin = async () => {
         lastName: 'Muhoro',
         phone: '1234567890',
         role: 'ADMIN', // Ensure this user is an admin
+        position: "CEO",
+        department: "IT",
+        profileImage: "https://www.canva.com/design/DAGhWlY93Qw/UGcBqkt4Ey1Tp9ScqdU9MA/edit?utm_content=DAGhWlY93Qw&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton"
       },
     });
 

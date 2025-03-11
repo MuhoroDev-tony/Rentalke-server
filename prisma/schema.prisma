@@ -1,4 +1,3 @@
-// This is your Prisma schema file
 generator client {
   provider = "prisma-client-js"
 }
@@ -6,206 +5,215 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
-} 
-
-enum UserRole {
-  CLIENT
-  MANAGER
-  ADMIN
-}
-
-enum UnitAvailability {
-  VACANT
-  OCCUPIED
-}
-
-enum BookingStatus {
-  PENDING
-  CONFIRMED
-  CANCELLED
 }
 
 model User {
-  id            String    @id @default(cuid())
-  firstName     String?
-  lastName      String?
-  phone         String?
-  email         String    @unique
-  password      String?
-  googleId      String?   @unique
-  facebookId    String?   @unique
-  role          UserRole  @default(CLIENT)
-  resetPasswordOTP String?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-
-  // Relations
-  estates       Estate[]
-  buildings     Building[]
-  rentalUnits   RentalUnit[]
-  bookings      Booking[]
-  reviews       Review[]
-  sentMessages     Message[]  @relation("SentMessages")
-  receivedMessages Message[]  @relation("ReceivedMessages")
-  notifications    Notification[]
+  id                 String              @id @default(cuid())
+  firstName          String?
+  lastName           String?
+  phone              String?
+  email              String              @unique
+  password           String?
+  googleId           String?             @unique
+  facebookId         String?             @unique
+  role               UserRole            @default(CLIENT)
+  position           AdminPosition?
+  department         String?
+  profileImage       String?
+  resetPasswordOTP   String?
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+  bookings           Booking[]
+  buildings          Building[]
+  estates            Estate[]
+  receivedMessages   Message[]           @relation("ReceivedMessages")
+  sentMessages       Message[]           @relation("SentMessages")
+  notifications      Notification[]
+  rentalUnits        RentalUnit[]
+  reviews            Review[]
 
   @@map("users")
 }
 
 model PendingUser {
-  id            String    @id @default(cuid())
-  firstName     String?
-  lastName      String?
-  phone         String?
-  email         String    @unique
-  password      String
-  role          UserRole  @default(CLIENT)
-  otp           String
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  id        String   @id @default(cuid())
+  firstName String?
+  lastName  String?
+  phone     String?
+  email     String   @unique
+  password  String
+  role      UserRole @default(CLIENT)
+  otp       String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@map("pending_users")
 }
 
 model Estate {
-  id            String    @id @default(cuid())
-  managerId     String
-  name          String
-  noOfBuildings Int
-  latitude      Float
-  longitude     Float
-  county        String
-  subcounty     String
+  id             String       @id @default(cuid())
+  managerId      String
+  name           String
+  noOfBuildings  Int
+  latitude       Float
+  longitude      Float
+  county         String
+  subcounty      String
   estateFeatures String[]
-  customFeatures   String[]
-  description   String?
-  images        String[]
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-
-  // Relations
-  manager       User      @relation(fields: [managerId], references: [id])
-  buildings     Building[] @relation("EstateBuildings")
-  rentalUnits   RentalUnit[] @relation("EstateUnits")
-  bookings      Booking[]
-  reviews       Review[]
+  customFeatures String[]
+  description    String?
+  images         String[]
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  bookings       Booking[]
+  buildings      Building[]   @relation("EstateBuildings")
+  manager        User         @relation(fields: [managerId], references: [id])
+  rentalUnits    RentalUnit[] @relation("EstateUnits")
+  reviews        Review[]
 
   @@map("estates")
 }
 
 model Building {
-  id              String    @id @default(cuid())
-  managerId       String
-  estateId        String
-  name            String
-  noOfFloors      Int
-  noOfUnits       Int
+  id               String       @id @default(cuid())
+  managerId        String
+  estateId         String
+  name             String
+  noOfFloors       Int
+  noOfUnits        Int
   buildingFeatures String[]
   customFeatures   String[]
-  images          String[]
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
-
-  // Relations
-  manager         User      @relation(fields: [managerId], references: [id])
-  estate          Estate    @relation("EstateBuildings", fields: [estateId], references: [id], onDelete: Cascade)
-  rentalUnits     RentalUnit[] @relation("BuildingUnits")
-  bookings        Booking[]
-  reviews         Review[]
+  images           String[]
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+  bookings         Booking[]
+  estate           Estate       @relation("EstateBuildings", fields: [estateId], references: [id], onDelete: Cascade)
+  manager          User         @relation(fields: [managerId], references: [id])
+  rentalUnits      RentalUnit[] @relation("BuildingUnits")
+  reviews          Review[]
 
   @@map("buildings")
 }
 
 model RentalUnit {
-  id              String           @id @default(cuid())
-  managerId       String
-  estateId        String
-  buildingId      String
-  name            String
-  unitType        String
-  unitSize        String
-  unitPrice       Float
+  id               String           @id @default(cuid())
+  managerId        String
+  estateId         String
+  buildingId       String
+  name             String
+  unitType         String
+  unitSize         String
+  unitPrice        Float
   interiorFeatures String[]
-  images          String[]
-  availability    UnitAvailability @default(VACANT)
-  createdAt       DateTime         @default(now())
-  updatedAt       DateTime         @updatedAt
-
-  // Relations
-  manager         User      @relation(fields: [managerId], references: [id])
-  estate          Estate    @relation("EstateUnits", fields: [estateId], references: [id], onDelete: Cascade)
-  building        Building  @relation("BuildingUnits", fields: [buildingId], references: [id], onDelete: Cascade)
-  bookings        Booking[]
-  reviews         Review[]
+  images           String[]
+  availability     UnitAvailability @default(VACANT)
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+  bookings         Booking[]
+  building         Building         @relation("BuildingUnits", fields: [buildingId], references: [id], onDelete: Cascade)
+  estate           Estate           @relation("EstateUnits", fields: [estateId], references: [id], onDelete: Cascade)
+  manager          User             @relation(fields: [managerId], references: [id])
+  reviews          Review[]
 
   @@map("rental_units")
 }
 
 model Booking {
-  id            String        @id @default(cuid())
-  clientId      String
-  estateId      String
-  buildingId    String
-  rentalUnitId  String
-  startDate     DateTime
-  endDate       DateTime
-  status        BookingStatus @default(PENDING)
-  createdAt     DateTime      @default(now())
-  updatedAt     DateTime      @updatedAt
-
-  // Relations
-  client        User        @relation(fields: [clientId], references: [id])
-  estate        Estate      @relation(fields: [estateId], references: [id])
-  building      Building    @relation(fields: [buildingId], references: [id])
-  rentalUnit    RentalUnit @relation(fields: [rentalUnitId], references: [id])
+  id           String        @id @default(cuid())
+  clientId     String
+  estateId     String
+  buildingId   String
+  rentalUnitId String
+  startDate    DateTime
+  endDate      DateTime
+  status       BookingStatus @default(PENDING)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  building     Building      @relation(fields: [buildingId], references: [id])
+  client       User          @relation(fields: [clientId], references: [id])
+  estate       Estate        @relation(fields: [estateId], references: [id])
+  rentalUnit   RentalUnit    @relation(fields: [rentalUnitId], references: [id])
 
   @@map("bookings")
 }
 
 model Notification {
-  id            String    @id @default(cuid())
-  userId        String
-  message       String
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-
-  // Relations
-  user          User      @relation(fields: [userId], references: [id])
+  id        String   @id @default(cuid())
+  userId    String
+  message   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id])
 
   @@map("notifications")
 }
 
 model Message {
-  id            String    @id @default(cuid())
-  senderId      String
-  receiverId    String
-  message       String
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-
-  // Relations
-  sender        User      @relation("SentMessages", fields: [senderId], references: [id])
-  receiver      User      @relation("ReceivedMessages", fields: [receiverId], references: [id])
+  id         String   @id @default(cuid())
+  senderId   String
+  receiverId String
+  message    String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  receiver   User     @relation("ReceivedMessages", fields: [receiverId], references: [id])
+  sender     User     @relation("SentMessages", fields: [senderId], references: [id])
 
   @@map("messages")
 }
 
 model Review {
-  id            String    @id @default(cuid())
-  userId        String
-  estateId      String
-  buildingId    String
-  rentalUnitId  String
-  rating        Int
-  comment       String
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-
-  // Relations
-  user          User        @relation(fields: [userId], references: [id])
-  estate        Estate      @relation(fields: [estateId], references: [id])
-  building      Building    @relation(fields: [buildingId], references: [id])
-  rentalUnit    RentalUnit @relation(fields: [rentalUnitId], references: [id])
+  id           String     @id @default(cuid())
+  userId       String
+  estateId     String
+  buildingId   String
+  rentalUnitId String
+  rating       Int
+  comment      String
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  building     Building   @relation(fields: [buildingId], references: [id])
+  estate       Estate     @relation(fields: [estateId], references: [id])
+  rentalUnit   RentalUnit @relation(fields: [rentalUnitId], references: [id])
+  user         User       @relation(fields: [userId], references: [id])
 
   @@map("reviews")
+}
+
+enum UserRole {
+  ADMIN
+  MANAGER
+  CLIENT
+}
+
+enum AdminPosition {
+  IT
+  SYSTEMADMIN
+  FINANCE
+  MANAGER
+  CEO
+}
+
+enum BookingStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  CANCELLED
+}
+
+enum UnitAvailability {
+  VACANT
+  OCCUPIED
+  MAINTENANCE
+}
+
+enum MessageStatus {
+  SENT
+  DELIVERED
+  READ
+}
+
+enum NotificationType {
+  SYSTEM
+  USER
+  ADMIN
 }

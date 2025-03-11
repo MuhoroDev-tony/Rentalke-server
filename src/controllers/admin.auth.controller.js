@@ -90,6 +90,7 @@ exports.login = async (req, res) => {
         email,
         role: 'ADMIN'
       }
+
     });
 
     if (!user || !(await bcrypt.compare(password, user.password))) {
@@ -99,7 +100,7 @@ exports.login = async (req, res) => {
       });
     }
 
-    const token = generateToken(user.id, user.role);
+    const token = generateToken(user.id, user.role, user.department, user.position,);
 
     res.status(200).json({
       success: true,
@@ -111,7 +112,11 @@ exports.login = async (req, res) => {
         firstName: user.firstName,
         lastName: user.lastName,
         phone: user.phone,
-        role: user.role
+        role: user.role,
+        department: "",
+        position: "",
+        profileImage: "",
+        name: `${user.firstName} ${user.lastName}`
       }
     });
   } catch (error) {
