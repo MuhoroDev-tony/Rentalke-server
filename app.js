@@ -14,12 +14,15 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Rate limiting
+app.set('trust proxy', 1); // Trust first proxy (or use 'true' for all proxies)
+
 const limiter = rateLimit({
   windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS) || 900000, // 15 minutes
   max: parseInt(process.env.RATE_LIMIT_MAX_REQUESTS) || 100
 });
+
 app.use(limiter);
+
 
 // Basic test route
 app.get('/', (req, res) => {
