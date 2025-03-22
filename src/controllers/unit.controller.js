@@ -307,23 +307,23 @@ exports.getManagerRentalUnitById = async (req, res) => {
 
 exports.getAllRentalUnits = async (req, res) => {
   try {
-    const rentalUnits = await prisma.rentalUnit.findMany({
-      include: {
-        managerId: true,
-        estateId: true,
-        buildingId: true,
-        manager: {
-          select: {
-            id: true,
-            firstName: true,
-            lastName: true,
-            email: true
-          }
-        },
-        estate: false,
-        building: false
-      }
-    });
+ const rentalUnits = await prisma.rentalUnit.findMany({
+  include: {
+    manager: {
+      select: {
+        id: true,
+        firstName: true,
+        lastName: true,
+        email: true,
+      },
+    },
+    estate: true,
+    building: true,
+    bookings: true,
+    reviews: true,
+  },
+});
+
 
     res.status(200).json({
       success: true,
