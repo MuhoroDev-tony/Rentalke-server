@@ -310,8 +310,18 @@ exports.getAllRentalUnits = async (req, res) => {
  const rentalUnits = await prisma.rentalUnit.findMany({
   select: {
     id: true,
+    managerId: true,
     estateId: true,
     buildingId: true,
+    name: true,
+    unitType: true,
+    unitSize: true,
+    unitPrice: true,
+    interiorFeatures: true,
+    images: true,
+    availability: true,
+    createdAt: true,
+    updatedAt: true,
     manager: {
       select: {
         id: true,
@@ -320,12 +330,10 @@ exports.getAllRentalUnits = async (req, res) => {
         email: true,
       },
     },
-    bookings: true,
-    reviews: true,
+    bookings: true, // Fetch all bookings
+    reviews: true,  // Fetch all reviews
   },
 });
-
-
 
     res.status(200).json({
       success: true,
