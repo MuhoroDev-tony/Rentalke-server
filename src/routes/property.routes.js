@@ -11,7 +11,7 @@ const { uploadToCloudinary } = require('../utils/cloudinary');
 const router = express.Router();
 
 // Image upload route
-router.post('/upload-images', authenticate, upload.array('images'), async (req, res) => {
+router.post('/upload-images', upload.array('images'), async (req, res) => {
     try {
         if (!req.files || req.files.length === 0) {
             return res.status(400).json({
@@ -39,7 +39,7 @@ router.post('/upload-images', authenticate, upload.array('images'), async (req, 
 });
 
 // Estate routes
-router.post('/manager/estate', authenticate,  estateController.createEstate);
+router.post('/manager/estate',  estateController.createEstate);
 router.get('/manager/estates', authenticate, estateController.getManagerEstates);
 router.get('/manager/estate/:id', authenticate, estateController.getManagerEstateById);
 router.get('/estates/all', estateController.getAllEstates);
