@@ -1,52 +1,61 @@
 const jwt = require('jsonwebtoken');
 const { PrismaClient } = require('@prisma/client');
+require('dotenv').config();
 
 const prisma = new PrismaClient();
 
 exports.authenticate = async (req, res, next) => {
   try {
     const authHeader = req.headers.authorization;
+
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
       return res.status(401).json({ success: false, message: 'No token provided' });
     }
 
     const token = authHeader.split(' ')[1];
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    console.log("Extracted Token:", token);
 
+    if (!process.env.JWT_SECRET) {
+      console.error("Error: JWT_SECRET is not set in environment variables");
+      return res.status(500).json({ success: false, message: 'Internal server error' });
+    }
+
+    let decoded;
+    try {
+      decoded = jwt.verify(token, process.env.JWT_SECRET);
+      console.log("Decoded Token:", decoded);
+    } catch (err) {
+      console.error("JWT Verification Error:", err.message);
+      return res.status(401).json({ success: false, message: 'Invalid or expired token' });
+    }
+
+    // Use the correct user ID field
+    const userId = decoded.id; // ✅ Fix: Always use 'id'
+    console.log("Final User ID for Query:", userId);
+
+    if (!userId) {
+      return res.status(401).json({ success: false, message: "Invalid token: User ID missing" });
+    }
+
+    // Fetch user from database
     const user = await prisma.user.findUnique({
-      where: { id: decoded.userId },
-      select: { 
-        id: true, 
-        email: true, 
-        role: true,
-        position: true,
-        department: true
-      }
+      where: { id: userId }, // ✅ Now uses the correct ID field
+      select: { id: true, email: true, role: true },
     });
 
+    console.log("User from DB:", user);
+
     if (!user) {
-      return res.status(401).json({ success: false, message: 'Invalid token' });
+      return res.status(401).json({ success: false, message: 'User not found or token invalid' });
     }
 
     req.user = user;
     next();
   } catch (error) {
-    if (error.name === 'TokenExpiredError') {
-      return res.status(401).json({ success: false, message: 'Token expired' });
-    }
-    return res.status(401).json({ success: false, message: 'Invalid token' });
+    console.error("Authentication Middleware Error:", error);
+    return res.status(401).json({
+      success: false,
+      message: error.message || 'Invalid token',
+    });
   }
-};
-
-// Middleware to check user roles
-exports.authorize = (...roles) => {
-  return (req, res, next) => {
-    if (!roles.includes(req.user.role)) {
-      return res.status(403).json({
-        success: false,
-        message: 'You do not have permission to perform this action'
-      });
-    }
-    next();
-  };
 };
